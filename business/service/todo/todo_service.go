@@ -1,6 +1,10 @@
 package service
 
-import repository "github.com/PichayuthK/go-api-boilerplate/business/repository/todo"
+import (
+	"time"
+
+	repository "github.com/PichayuthK/go-api-boilerplate/business/repository/todo"
+)
 
 // todoService is an concrete struct fo TodoService interface
 // it contians the implementation of all TodoService interface
@@ -15,10 +19,37 @@ func NewTodoService(todoRepo repository.TodoRepository) TodoService {
 
 // GetTodos is used to get all todos
 func (s todoService) GetTodos() ([]TodoResponse, error) {
-	panic("unimplemented")
+
+	todos, err := s.todoRepo.ListTodo()
+	if err != nil {
+		return nil, err
+	}
+
+	todoResponses := []TodoResponse{}
+	for _, todo := range todos {
+		todoRes := TodoResponse{
+			ID:        todo.ID,
+			Title:     todo.Title,
+			FetchTiem: time.Now(),
+		}
+		todoResponses = append(todoResponses, todoRes)
+	}
+
+	return todoResponses, nil
 }
 
 // GetTodoByID is used to get a single todo by its ID
 func (s todoService) GetTodoByID(id int) (*TodoResponse, error) {
-	panic("unimplemented")
+	todo, err := s.todoRepo.GetTodo(id)
+	if err != nil {
+		return nil, err
+	}
+
+	todoRes := TodoResponse{
+		ID:        todo.ID,
+		Title:     todo.Title,
+		FetchTiem: time.Now(),
+	}
+
+	return &todoRes, nil
 }
